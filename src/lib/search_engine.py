@@ -10,17 +10,23 @@ def sleeper():
     time.sleep(random.randrange(3, 11))
 
 
-def _req(url, ua, term, results, lang, start, proxies, backoff=5):
+def _req(engine, term, results, lang, start, proxies, backoff=5):
     sleeper()
     resp = get(
-        url=url,
+        url=engine.value[1],
         headers={
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'},
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36'},
         params=dict(
             q=term,
             num=results + 2,  # Prevents multiple requests
             hl=lang,
-            start=start,
+            start=start
+        ) if engine == SearchEngineType.google else
+        dict(
+            q=term,
+            count=results,
+            cc=lang,
+            offset=start
         ),
         proxies=proxies,
     )
@@ -29,7 +35,7 @@ def _req(url, ua, term, results, lang, start, proxies, backoff=5):
         time.sleep(backoff)
         backoff = backoff * 2
         print("Retrying...new backoff: %s" % backoff)
-        _req(url, ua, term, results, lang, start, proxies, backoff)
+        _req(engine, term, results, lang, start, proxies, backoff)
     elif resp.status_code == 200:
         return resp
     else:
@@ -39,9 +45,6 @@ def _req(url, ua, term, results, lang, start, proxies, backoff=5):
 class SearchEngineType(Enum):
     google = 1, "https://www.google.com/search"
     bing = 2, "https://www.bing.com/search"
-
-    def __str__(self):
-        return self.value[1]
 
 
 class SearchResult:
@@ -55,11 +58,6 @@ class SearchResult:
 
 
 def search(engine, term, num_results=10, lang="en", proxy=None, advanced=True):
-    location = 'fake_user_agent.json'
-    ua = UserAgent(use_cache_server=False, path=location)
-
-    escaped_term = term.replace(' ', '+')
-
     # Proxy
     proxies = None
     if proxy:
@@ -72,7 +70,7 @@ def search(engine, term, num_results=10, lang="en", proxy=None, advanced=True):
     start = 0
     while start < num_results:
         # Send request
-        resp = _req(engine, ua, escaped_term, num_results - start, lang, start, proxies)
+        resp = _req(engine, term, num_results - start, lang, start, proxies)
 
         # Parse
         soup = BeautifulSoup(resp.text, 'html.parser')
