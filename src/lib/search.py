@@ -1,10 +1,11 @@
 import time
 import random
-
+from urllib.parse import urlparse
 from enum import Enum
 from bs4 import BeautifulSoup
 from requests import get
 
+MAX_NUM_RESULTS = 10
 
 def sleeper():
     time.sleep(random.randrange(3, 11))
@@ -18,7 +19,7 @@ def _req(engine, term, results, lang, start, proxies, backoff=5):
             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36'},
         params=dict(
             q=term,
-            num=results + 2,  # Prevents multiple requests
+            num=results + 1,
             hl=lang,
             start=start
         ) if engine == SearchEngineType.google else
@@ -57,7 +58,7 @@ class SearchResult:
         return f"SearchResult(url={self.url}, title={self.title}, description={self.description})"
 
 
-def search(engine, term, num_results=10, lang="en", proxy=None, advanced=True):
+def search(engine, term, num_results, lang="en", proxy=None, advanced=False):
     # Proxy
     proxies = None
     if proxy:
@@ -95,3 +96,14 @@ def search(engine, term, num_results=10, lang="en", proxy=None, advanced=True):
                     yield SearchResult(link['href'], title.text, description.text)
                 else:
                     yield link['href']
+
+
+def get_rank(engine, term, domain, num_results=MAX_NUM_RESULTS):
+    results = search(engine, term, num_results)
+    rank = 0
+    for result in results:
+        rank = rank + 1
+        result_domain = urlparse(result).netloc
+        if domain in result_domain:
+            return rank
+    return -1
