@@ -8,11 +8,14 @@ All the dependencies can be found in the requirements.txt file. This file contai
 
 ## Start process
 
-The process can be launched in both dev and prod mode. The only different between these two modes is the configuration file that it reads from.
+Before being able to run the scheduler, you must set the following environment variables:
+- SQS_REGION
+- SQS_NAME
+- DATABASE_NAME
+- DATABASE_HOST
+- DATABASE_USERNAME
+- DATABASE_PASSWORD
 
-> python src/main.py --env dev
+The process can be launched by running the command below:
 
-All the specific environment specific configuration is provided in the config folder (dev.ini and prod.ini). In these files, the following parameters are specified:
-
-- SQS
-- DB
+> python3 src/main.py
