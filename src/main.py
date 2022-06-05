@@ -3,48 +3,23 @@
 import os
 import sys
 import logging.config
-import argparse
-import configparser
 import json
 
-from src.lib.search import get_rank, search, SearchEngineType
-from src.lib.aws import receive_message, send_email
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)) + "/..")
+from src.lib.search import get_rank, SearchEngineType
+from src.lib.aws import receive_message
 from src.lib.db import get_db_session, update_stats
 
 log = logging.getLogger(__name__)
 
 
-def get_conf(env):
-    """Get config object"""
-    config = configparser.ConfigParser()
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    if env == "prod":
-        config.read(basedir + "/conf/prod.ini")
-    else:
-        config.read(basedir + "/conf/dev.ini")
-    return config
-
-
-def get_env():
-    """Get environment to run in"""
-    parser = argparse.ArgumentParser(description="Serpbot backend.")
-    parser.add_argument("-e", "--env", default="dev",
-                        help="select an environment to launch in (dev, prod)")
-    args = parser.parse_args()
-    if args.env.lower() not in ["dev", "prod"]:
-        log.error("Invalid environment selected")
-        sys.exit(1)
-    return args.env.lower()
-
-
-def run(env):
-    log.info("Starting in %s mode", env)
-    conf = get_conf(env)
+def run():
+    log.info("Starting process")
     try:
         while True:
-            message = receive_message(conf["sqs"]["name"], conf["sqs"]["region"])
+            message = receive_message()
             if message is not None:
-                session = get_db_session(conf)
+                session = get_db_session()
                 websites = json.loads(message["Body"])
                 username = message["MessageAttributes"]["username"]["StringValue"]
                 email = message["MessageAttributes"]["email"]["StringValue"]
@@ -73,4 +48,4 @@ def run(env):
 
 
 if __name__ == "__main__":
-    run(get_env())
+    run()
