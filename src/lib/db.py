@@ -14,7 +14,7 @@ from src.model.orm import base, Trend
 log = logging.getLogger(__name__)
 
 
-def get_db_session(conf):
+def get_db_session():
     """Get db session"""
     engine = create_engine("mysql://%s:%s@%s/%s" % (os.environ.get("DATABASE_USERNAME"),
                                                     os.environ.get("DATABASE_PASSWORD"),
