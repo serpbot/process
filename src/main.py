@@ -7,7 +7,7 @@ import json
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)) + "/..")
 from src.lib.search import get_rank, SearchEngineType
-from src.lib.aws import receive_message
+from src.lib.aws import receive_message, send_email
 from src.lib.db import get_db_session, update_stats
 
 log = logging.getLogger(__name__)
@@ -23,8 +23,11 @@ def run():
                 websites = json.loads(message["Body"])
                 username = message["MessageAttributes"]["username"]["StringValue"]
                 email = message["MessageAttributes"]["email"]["StringValue"]
+                notifications = message["MessageAttributes"]["notifications"]["StringValue"]
 
+                stats_websites = []
                 for website in websites:
+                    stats_keywords = []
                     domain = website["domain"]
                     for keyword in website["keywords"]:
                         # Get Bing rank
@@ -34,11 +37,16 @@ def run():
 
                         # Get Google rank
                         log.info("Looking up keyword (%s) for domain (%s) on Bing" % (keyword["name"], domain))
-                        google_rank = get_rank(SearchEngineType.bing, keyword["name"], domain)
+                        google_rank = get_rank(SearchEngineType.google, keyword["name"], domain)
                         update_stats(session, keyword["id"], google_rank, "google")
 
+                        stats_keywords.append({"keyword": keyword["name"], "bing_rank": bing_rank, "google_rank": google_rank})
+
+                    stats_websites.append({"domain": domain, "keywords": stats_keywords})
+
                 # Send email
-                # send_email(email, domain=domain.domain)
+                if notifications == "True":
+                    send_email(email, username=username, websites=stats_websites)
 
                 # Close DB conneciton
                 session.close()

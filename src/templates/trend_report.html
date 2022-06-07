@@ -5,7 +5,7 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="x-apple-disable-message-reformatting">
-  <title>Your order is in progress!</title>
+  <title>Daily status update</title>
 
   <!--[if mso]>
   <xml>
@@ -94,28 +94,156 @@
     <td align="center" style bgcolor="#ffffff">
       <table class="sm-w-full" style="width: 640px;" cellpadding="0" cellspacing="0" role="presentation">
         <tr>
-          <td align="left" class="sm-px-16 sm-py-24" style="padding-left: 40px; padding-right: 40px; padding-top: 48px; padding-bottom: 48px;" bgcolor="#ffffff">
+          <td align="center" class="sm-px-16 sm-py-24" style="padding-left: 40px; padding-right: 40px; padding-top: 48px; padding-bottom: 48px;" bgcolor="#ffffff">
             <div style="margin-bottom: 24px;">
-              <a href="https://wayback.download" style="color: #0047c3; text-decoration: none;">
+              <a href="https://serp.bot" style="color: #0047c3; text-decoration: none;">
                 <img src="https://cdn.onintime.com/serpbot/img/logo.png" alt="Serpbot" width="143" style="line-height: 100%; vertical-align: middle; border: 0;">
               </a>
             </div>
-            <p style="line-height: 28px; margin: 0; color: #4a5566; font-size: 21px;">There are new updates for domain {{domain}} waiting for you. Visit the dashboard to view them!</p>
-            <br>
-            <br>
-            <table class="sm-w-full" cellpadding="0" cellspacing="0" role="presentation" style="margin-left:auto;margin-right:auto;">
+            <p style="line-height: 28px; margin: 0; color: #4a5566; font-size: 21px;">Hi {{username}}</p>
+            <p style="line-height: 28px; margin: 0; color: #4a5566; font-size: 21px;">The latest serp results are in. You can view the detailed progression by clicking on the button below or you can view the highlight below.</p>
+            <div class="sm-h-16" style="line-height: 16px;">&nbsp;</div>
+            <table class="sm-w-full" style="margin-left: auto; margin-right: auto;" role="presentation" cellspacing="0" cellpadding="0" align="center">
+              <tbody><tr>
+                <td class="hover-bg-brand-600" style="mso-padding-alt: 20px 32px; border-radius: 4px; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06); color: #ffffff;" bgcolor="#4F46E5" align="center">
+                  <a href="https://serp.bot/dashboard" class="sm-text-14 sm-py-16" style="display: inline-block; font-weight: 700; line-height: 16px; padding-top: 20px; padding-bottom: 20px; padding-left: 32px; padding-right: 32px; color: #ffffff; font-size: 16px; text-decoration: none;">Dashboard</a>
+                </td>
+              </tr>
+            </tbody></table>
+            <div class="sm-h-40" style="line-height: 40px;">&nbsp;</div>
+            <table style="width: 100%;" role="presentation" cellspacing="0" cellpadding="0">
+              <tbody><tr>
+                <td>
+                  <div style="background-color: #e1e1ea; height: 1px; line-height: 1px;">&nbsp;</div>
+                </td>
+              </tr>
+            </tbody></table>
 
-            </table>
-            <div style="text-align: left;">
-              <table style="width: 100%;" cellpadding="0" cellspacing="0" role="presentation">
-                <tr>
-                  <td style="padding-bottom: 16px; padding-top: 64px;">
-                    <div style="background-color: #e1e1ea; height: 1px; line-height: 1px;">&nbsp;</div>
-                  </td>
-                </tr>
-              </table>
+            <!-- FOREACH DOMAIN -->
+            {% for website in websites %}
+            <table style="width: 100%;" role="presentation" cellspacing="0" cellpadding="0">
+              <tbody><tr class="sm-w-full sm-table">
+                <td class="sm-text-center sm-table-header-group sm-w-full sm-p-0" style="padding-right: 16px; padding-top: 30px; text-align: right; vertical-align: top; width: 120px;" valign="top" align="right">
+                  <div class="sm-mb-16">
+                    <p class="sm-mb-8" style="margin: 0; margin-bottom: 16px;">{{website.domain}}</p>
+                  </div>
+                </td>
+                <td class="sm-pl-0 sm-border-none" style="border-left: 1px solid #ededf2; padding-left: 16px;">
 
-            </div>
+                  <!-- FOREACH KEYWORD -->
+                  {% for keyword in website.keywords %}
+                  <table class="sm-mx-auto" role="presentation" cellspacing="0" cellpadding="0">
+                    <tbody><tr>
+                      <td class="sm-pr-20" style="padding-top: 2px; padding-right: 16px; vertical-align: top; width: 92px;" valign="top">
+                        <table role="presentation" cellspacing="0" cellpadding="0">
+                          <tbody>
+                            <tr>
+                              <td style="border-radius: 8px; line-height: 16px; padding-top: 2px; padding-bottom: 2px; padding-left: 8px; padding-right: 8px; text-align: center; color: #0052e2; font-size: 12px; width: 72px;" bgcolor="#ecf3ff" align="center">
+                                {% if keyword.bing_rank == -1 %}
+                                &#8734;
+                                {% else %}
+                                {{keyword.bing_rank}}
+                                {% endif %}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td><div class="sm-h-40" style="line-height: 5px;">&nbsp;</div></td>
+                            </tr>
+                            <tr>
+                              <td style="border-radius: 8px; line-height: 16px; padding-top: 2px; padding-bottom: 2px; padding-left: 8px; padding-right: 8px; text-align: center; color: #10b258; font-size: 12px; width: 72px;" bgcolor="#edfdf4" align="center">
+                                {% if keyword.google_rank == -1 %}
+                                &#8734;
+                                {% else %}
+                                {{keyword.google_rank}}
+                                {% endif %}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                      <td>
+                        <p style="line-height: 22px; margin: 0; color: #8492a6; font-size: 16px;">{{keyword.keyword}}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="2" style="height: 24px;"></td>
+                    </tr>
+                  </tbody></table>
+                  {% endfor %}
+                  <!-- END FOR EACH KEYWORD -->
+
+                  <table style="width: 100%;" role="presentation" cellspacing="0" cellpadding="0">
+                    <tbody><tr>
+                      <td>
+                        <div style="background-color: #e1e1ea; height: 1px; line-height: 1px;">&nbsp;</div>
+                      </td>
+                    </tr>
+                  </tbody></table>
+                </td>
+              </tr>
+            </tbody></table>
+            {% endfor %}
+            <!-- FOREACH DOMAIN -->
+
+
+            <table style="width: 100%;" role="presentation" cellspacing="0" cellpadding="0">
+              <tbody><tr class="sm-w-full sm-table">
+                <td class="sm-text-center sm-table-header-group sm-w-full sm-p-0" style="padding-right: 16px; padding-top: 30px; text-align: right; vertical-align: top; width: 120px;" valign="top" align="right">
+                  <div class="sm-mb-16">
+                    <p class="sm-mb-8" style="margin: 0; margin-bottom: 16px;">Legend</p>
+                  </div>
+                </td>
+                <td class="sm-pl-0 sm-border-none" style="border-left: 1px solid #ededf2; padding-left: 16px;">
+                  <table class="sm-mx-auto" role="presentation" cellspacing="0" cellpadding="0">
+                    <tbody><tr>
+                      <td class="sm-pr-20" style="padding-top: 2px; padding-right: 16px; vertical-align: top; width: 92px;" valign="top">
+                        <table role="presentation" cellspacing="0" cellpadding="0">
+                          <tbody>
+                            <tr>
+                               <td style="border-radius: 8px; line-height: 16px; padding-top: 2px; padding-bottom: 2px; padding-left: 8px; padding-right: 8px; text-align: center; color: #0052e2; font-size: 12px; width: 72px;" bgcolor="#ecf3ff" align="center">
+                               Bing
+                               </td>
+                            </tr>
+                            <tr>
+                              <td><div class="sm-h-40" style="line-height: 5px;">&nbsp;</div></td>
+                            </tr>
+                            <tr>
+                             <td style="border-radius: 8px; line-height: 16px; padding-top: 2px; padding-bottom: 2px; padding-left: 8px; padding-right: 8px; text-align: center; color: #10b258; font-size: 12px; width: 72px;" bgcolor="#edfdf4" align="center">
+                             Google
+                             </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="2" style="height: 24px;"></td>
+                    </tr>
+                  </tbody></table>
+
+                  <table style="width: 100%;" role="presentation" cellspacing="0" cellpadding="0">
+                    <tbody><tr>
+                      <td>
+                        <div style="background-color: #e1e1ea; height: 1px; line-height: 1px;">&nbsp;</div>
+                      </td>
+                    </tr>
+                  </tbody></table>
+                </td>
+              </tr>
+            </tbody></table>
+
+            <table style="width: 100%;" role="presentation" cellspacing="0" cellpadding="0">
+              <tbody><tr>
+                <td style="padding-bottom: 16px; padding-top: 64px;">
+                  <div style="background-color: #e1e1ea; height: 1px; line-height: 1px;">&nbsp;</div>
+                </td>
+              </tr>
+            </tbody></table>
+            <p style="line-height: 16px; margin-top: 0; margin-bottom: 16px; color: #8492a6; font-size: 12px;">
+              This email was sent to you as a registered member of <a href="https://serp.bot" class="hover-text-brand-700 hover-underline" style="color: #0047c3; text-decoration: none; display: inline-block;">serp.bot</a>. To update your emails preferences <a href="https://serp.bot/settings" class="hover-text-brand-700 hover-underline" style="color: #0047c3; text-decoration: none; display: inline-block;">click here</a>.
+              <span class="sm-block sm-mt-16">Use of the service and website is subject to our <a href="https://serp.bot/terms" class="hover-text-brand-700 hover-underline" style="color: #0047c3; text-decoration: none; display: inline-block;">Terms of Use</a> and <a href="https://serp.bot/privacy" class="hover-text-brand-700 hover-underline" style="color: #0047c3; text-decoration: none; display: inline-block;">Privacy Statement</a>.</span>
+            </p>
+            <p style="line-height: 16px; margin: 0; color: #8492a6; font-size: 12px;">© 2022 Serpbot. All rights reserved.</p>
           </td>
         </tr>
       </table>
