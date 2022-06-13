@@ -100,7 +100,7 @@ def search(engine, term, num_results, lang="en", proxy=None, advanced=False):
 
 def get_rank(engine, term, domain, num_results=MAX_NUM_RESULTS):
     results = search(engine, term, num_results)
-    rank = 1
+    rank = 0
     for result in results:
         rank = rank + 1
         result_domain = urlparse(result).netloc
